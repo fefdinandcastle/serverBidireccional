@@ -39,7 +39,7 @@ public class MensajeServerThread extends Thread {
             dos.writeUTF(message);
             dos.flush();
         } catch (IOException e) {
-            System.out.println("Client " + socket.getRemoteSocketAddress() + " error sending : " + e.getMessage());
+            //System.out.println("Client " + socket.getRemoteSocketAddress() + " error sending : " + e.getMessage());
             server.remove(ID);
         }
     }

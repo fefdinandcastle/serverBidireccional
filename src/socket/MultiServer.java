@@ -21,6 +21,8 @@ public class MultiServer implements Runnable {
     private Thread thread = null;
     private MensajeServerThread clients[] = new MensajeServerThread[50];
     private int clientCount = 0;
+    int count = 0;
+    int currentID = 0;
 
     public MultiServer() {
         try {
@@ -65,29 +67,47 @@ public class MultiServer implements Runnable {
     public synchronized void handle(SocketAddress ID, String input) {
         if (input.equals("exit")) {
             clients[findClient(ID)].send("exit");
+            int idint = 0;
             for (int i = 0; i < clientCount; i++) {
                 if(clients[i].getID() == ID){
-                    int id = i+1;
-                    System.out.println("\nEl cliente " + id + " se ha desconectado del servidor");
-                    // if this client ID is the sender, just skip it
-                    continue;
+                    idint = i+1;
+                    break;
                 }
-                //clients[i].send("\n" + ID + " says : " + input);
                 
             }
+            System.out.println("\nSe ha desconectado el cliente "+idint+" del servidor.");
             remove(ID);
-        } else {
-            
+        }else if(input.equals("first")){
+            for (int i = 0; i < clientCount; i++) {
+                if(clients[i].getID() == ID){
+                    clients[i].send(count+""); 
+                    break;
+                }   
+            }
+        }else{
+            int idint = 0;
+            for (int i = 0; i < clientCount; i++) {
+                if(clients[i].getID() == ID){
+                    currentID = i+1;
+                    break;
+                }   
+            }
+            String tmp = String.valueOf(input.charAt(0));
+            count = Integer.valueOf(tmp);
+            for (int i = 0; i < clientCount; i++) {
+                clients[i].send(count+" "+currentID); 
+            }
             for (int i = 0; i < clientCount; i++) {
                 if(clients[i].getID() == ID){
                     int id = i+1;
-                    System.out.println("\nCliente " + id + " dice : " + input);
+                    System.out.println("\nCliente " + id + " dice : " + count);
                     // if this client ID is the sender, just skip it
                     continue;
                 }
                 //clients[i].send("\n" + ID + " says : " + input);
+            }    
                 
-            }
+            
         }
     }
 

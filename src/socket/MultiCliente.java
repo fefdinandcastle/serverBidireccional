@@ -34,6 +34,8 @@ public class MultiCliente implements Runnable {
     private DataOutputStream dos = null;
     private MensajeClienteThread client = null;
     private int n = 1;
+    int recvNumber = 0;
+    boolean status = false;
 
     public MultiCliente() {
         try {
@@ -55,19 +57,39 @@ public class MultiCliente implements Runnable {
     public void run() {
         while (thread != null) {
             try {
-                if(n<=5){
-                    System.out.print("Enviando mensaje a servidor "+n+"\n");
-                    String s = Integer.toString(n);
-                    dos.writeUTF(s);
-                    dos.flush();
-                    n++;
-                    try {
-                        Thread.sleep(15);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(MultiCliente.class.getName()).log(Level.SEVERE, null, ex);
+                if(recvNumber<=7){
+                    if(status == false){
+                        dos.writeUTF("first");
+                        dos.flush();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(MultiCliente.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }else{
+                        recvNumber++;
+                        if(recvNumber == 8){
+                            System.out.print("\nSaliendo...");
+                            String s = "exit";
+                            dos.writeUTF(s);
+                            dos.flush();                   
+                        }else{
+                            System.out.print("\nEnviando mensaje a servidor "+recvNumber+"\n");
+                            String s = Integer.toString(recvNumber);
+                            dos.writeUTF(s);
+                            dos.flush();
+
+                            try {
+                                Thread.sleep(300);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MultiCliente.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        
                     }
+                    
                 }else{
-                    System.out.print("Saliendo...");
+                    System.out.print("\nSaliendo...");
                     String s = "exit";
                     dos.writeUTF(s);
                     dos.flush();
@@ -91,8 +113,11 @@ public class MultiCliente implements Runnable {
         if (message.equals("exit")) {
             stop();
         } else {
-            System.out.println(message);
-            System.out.print("Message to server : ");
+            //System.out.println(message);
+            status = true;
+            String c = String.valueOf(message.charAt(0));
+            recvNumber = Integer.valueOf(c);
+            System.out.print("\nMessage from server : "+message);
         }
     }
 
