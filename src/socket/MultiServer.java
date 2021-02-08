@@ -72,8 +72,7 @@ public class MultiServer implements Runnable {
                 if(clients[i].getID() == ID){
                     idint = i+1;
                     break;
-                }
-                
+                }  
             }
             System.out.println("\nSe ha desconectado el cliente "+idint+" del servidor.");
             remove(ID);
@@ -92,7 +91,12 @@ public class MultiServer implements Runnable {
                     break;
                 }   
             }
-            String tmp = String.valueOf(input.charAt(0));
+            String tmp = String.valueOf(input.subSequence(0, 1));
+            if(input.length()>1){
+                tmp = ""+input.charAt(0)+input.charAt(1);
+                //System.out.println(tmp);
+            }
+            
             count = Integer.valueOf(tmp);
             for (int i = 0; i < clientCount; i++) {
                 clients[i].send(count+" "+currentID); 

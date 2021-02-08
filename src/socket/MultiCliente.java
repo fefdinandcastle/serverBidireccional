@@ -36,6 +36,7 @@ public class MultiCliente implements Runnable {
     private int n = 1;
     int recvNumber = 0;
     boolean status = false;
+    int sendCount = 0;
 
     public MultiCliente() {
         try {
@@ -57,7 +58,7 @@ public class MultiCliente implements Runnable {
     public void run() {
         while (thread != null) {
             try {
-                if(recvNumber<=7){
+                if(sendCount<5){
                     if(status == false){
                         dos.writeUTF("first");
                         dos.flush();
@@ -68,7 +69,7 @@ public class MultiCliente implements Runnable {
                         }
                     }else{
                         recvNumber++;
-                        if(recvNumber == 8){
+                        if(sendCount == 5){
                             System.out.print("\nSaliendo...");
                             String s = "exit";
                             dos.writeUTF(s);
@@ -78,9 +79,10 @@ public class MultiCliente implements Runnable {
                             String s = Integer.toString(recvNumber);
                             dos.writeUTF(s);
                             dos.flush();
+                            sendCount++;
 
                             try {
-                                Thread.sleep(300);
+                                Thread.sleep(400);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(MultiCliente.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -98,7 +100,7 @@ public class MultiCliente implements Runnable {
                 
                 // Sleep, because this thread must wait ChatClientThread to show the message first
                 try {
-                    thread.sleep(500);
+                    thread.sleep(600);
                 } catch (InterruptedException e) {
                     System.out.println("Error : " + e.getMessage());
                 }
@@ -115,8 +117,13 @@ public class MultiCliente implements Runnable {
         } else {
             //System.out.println(message);
             status = true;
-            String c = String.valueOf(message.charAt(0));
-            recvNumber = Integer.valueOf(c);
+            String x = String.valueOf(message.charAt(0));
+            if(message.length()>1&&message.charAt(1)!=' '){
+                x = ""+message.charAt(0)+message.charAt(1);
+            }
+            
+            //System.out.println(tmp);
+            recvNumber = Integer.valueOf(x);
             System.out.print("\nMessage from server : "+message);
         }
     }
